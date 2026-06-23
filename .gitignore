@@ -1,0 +1,7 @@
+.idea/
+.git.code-workspace
+restaurant_booking_backup/
+restaurant_booking/venv/
+restaurant_booking/db.sqlite3
+__pycache__/
+*.pyc

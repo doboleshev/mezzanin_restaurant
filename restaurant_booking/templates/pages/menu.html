@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+
+{% block title %}Меню - Ресторан "Мезонин"{% endblock %}
+
+{% block content %}
+<style>
+    .menu-hero {
+        background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+                    url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 120px 0 80px;
+        margin-bottom: 0;
+    }
+
+    .menu-nav .nav-link {
+        color: var(--primary-color);
+        border: 2px solid transparent;
+        border-radius: 30px;
+        padding: 10px 24px;
+        margin: 4px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .menu-nav .nav-link:hover,
+    .menu-nav .nav-link.active {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .menu-category-title {
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--accent-color);
+        padding-bottom: 12px;
+        margin-bottom: 30px;
+    }
+
+    .menu-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 0;
+        border-bottom: 1px dashed #dee2e6;
+        gap: 16px;
+    }
+
+    .menu-item-img {
+        width: 90px;
+        height: 90px;
+        object-fit: cover;
+        border-radius: 12px;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+
+    @media (min-width: 768px) {
+        .menu-item-img {
+            width: 110px;
+            height: 110px;
+        }
+    }
+
+    .menu-item:last-child {
+        border-bottom: none;
+    }
+
+    .menu-item-name {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #2c1810;
+        margin-bottom: 4px;
+    }
+
+    .menu-item-desc {
+        color: #6c757d;
+        font-size: 0.95rem;
+        margin-bottom: 0;
+    }
+
+    .menu-item-weight {
+        color: #adb5bd;
+        font-size: 0.85rem;
+    }
+
+    .menu-item-price {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        white-space: nowrap;
+        margin-left: 20px;
+    }
+
+    .menu-item-price small {
+        font-size: 0.75rem;
+        font-weight: 400;
+    }
+
+    .desserts-banner {
+        background: linear-gradient(135deg, #2c1810, #5c3a28);
+        color: white;
+        border-radius: 20px;
+        padding: 50px 40px;
+        margin-bottom: 40px;
+    }
+
+    .menu-sidebar {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        padding: 30px;
+        position: sticky;
+        top: 90px;
+    }
+
+    .menu-sidebar hr {
+        margin: 20px 0;
+    }
+
+    .pdf-btn {
+        border: 2px dashed var(--primary-color);
+        color: var(--primary-color);
+        background: transparent;
+        transition: all 0.3s;
+    }
+
+    .pdf-btn:hover {
+        background: var(--primary-color);
+        color: white;
+        border-style: solid;
+    }
+</style>
+
+<!-- Заголовок -->
+<section class="menu-hero">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-3">Меню ресторана</h1>
+        <p class="lead mb-0">Авторская кухня, сезонные продукты и изысканные десерты</p>
+    </div>
+</section>
+
+<!-- Навигация по категориям -->
+<section class="container py-4">
+    <ul class="nav menu-nav justify-content-center flex-wrap" id="menuTabs" role="tablist">
+        {% for category in categories %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if forloop.first %}active{% endif %}"
+                    id="tab-{{ category.slug }}"
+                    data-bs-toggle="tab"
+                    data-bs-target="#panel-{{ category.slug }}"
+                    type="button"
+                    role="tab">
+                <i class="bi {{ category.icon }} me-1"></i> {{ category.title }}
+            </button>
+        </li>
+        {% endfor %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link"
+                    id="tab-desserts"
+                    data-bs-toggle="tab"
+                    data-bs-target="#panel-desserts"
+                    type="button"
+                    role="tab">
+                <i class="bi bi-cake2 me-1"></i> Торты и десерты
+            </button>
+        </li>
+    </ul>
+</section>
+
+<!-- Основной контент -->
+<section class="container pb-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="tab-content" id="menuTabContent">
+                {% for category in categories %}
+                <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+                     id="panel-{{ category.slug }}"
+                     role="tabpanel">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4 p-md-5">
+                            <h2 class="menu-category-title">
+                                <i class="bi {{ category.icon }} me-2"></i>{{ category.title }}
+                            </h2>
+                            {% for item in category.items %}
+                            <div class="menu-item">
+                                <img src="{{ item.image }}" alt="{{ item.name }}" class="menu-item-img" loading="lazy"
+                                     onerror="this.src='https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=200&h=200&fit=crop'">
+                                <div class="flex-grow-1">
+                                    <div class="menu-item-name">{{ item.name }}</div>
+                                    <p class="menu-item-desc">{{ item.description }}</p>
+                                    <span class="menu-item-weight">{{ item.weight }}</span>
+                                </div>
+                                <div class="menu-item-price">
+                                    {{ item.price }} <small>₽</small>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- Торты и десерты -->
+                <div class="tab-pane fade" id="panel-desserts" role="tabpanel">
+                    <div class="desserts-banner text-center mb-4">
+                        <h2 class="mb-3">{{ desserts.title }}</h2>
+                        <p class="lead mb-0">{{ desserts.subtitle }}</p>
+                    </div>
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4 p-md-5">
+                            {% for item in desserts.items %}
+                            <div class="menu-item">
+                                <img src="{{ item.image }}" alt="{{ item.name }}" class="menu-item-img" loading="lazy"
+                                     onerror="this.src='https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=200&h=200&fit=crop'">
+                                <div class="flex-grow-1">
+                                    <div class="menu-item-name">{{ item.name }}</div>
+                                    <p class="menu-item-desc">{{ item.description }}</p>
+                                    <span class="menu-item-weight">{{ item.weight }}</span>
+                                </div>
+                                <div class="menu-item-price">
+                                    {% if item.price %}
+                                        {{ item.price }} <small>₽</small>
+                                    {% else %}
+                                        <small>по запросу</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Боковая панель -->
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="menu-sidebar">
+                <h5><i class="bi bi-clock me-2"></i>Время работы</h5>
+                <p class="mb-1"><strong>Пн–Чт:</strong> 12:00 – 23:00</p>
+                <p class="mb-1"><strong>Пт–Сб:</strong> 12:00 – 00:00</p>
+                <p class="mb-0"><strong>Вс:</strong> 12:00 – 22:00</p>
+
+                <hr>
+
+                <h5><i class="bi bi-file-earmark-pdf me-2"></i>Меню ресторана</h5>
+                <p class="text-muted small">Скачайте полное меню в формате PDF</p>
+                <a href="#" class="btn pdf-btn w-100 mb-3" onclick="alert('PDF-версия меню скоро будет доступна'); return false;">
+                    <i class="bi bi-download me-2"></i>Загрузить PDF
+                </a>
+
+                <hr>
+
+                <h5><i class="bi bi-telephone me-2"></i>Забронировать стол</h5>
+                <p class="mb-1"><a href="tel:+74951234567" class="text-decoration-none">+7 (495) 123-45-67</a></p>
+                <p class="text-muted small mb-3">или онлайн через наш сайт</p>
+                <a href="{% url 'booking_create' %}" class="btn btn-primary w-100">
+                    <i class="bi bi-calendar-plus me-2"></i>Забронировать
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Призыв к бронированию -->
+<section class="container pb-5">
+    <div class="reservation-card">
+        <div class="row align-items-center">
+            <div class="col-md-8 p-4 p-md-5">
+                <h3 class="mb-3">Попробуйте наше меню лично</h3>
+                <p class="mb-0">Забронируйте столик и насладитесь блюдами от нашего шеф-повара в уютной атмосфере ресторана.</p>
+            </div>
+            <div class="col-md-4 text-center p-4">
+                <a href="{% url 'booking_create' %}" class="btn btn-light btn-lg">
+                    <i class="bi bi-calendar-check"></i> Забронировать
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

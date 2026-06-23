@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from pages.views import home, about
+from pages.views import home, about, menu
 from accounts.views import register, profile
 from bookings.views import booking_create, booking_list
 from django.contrib.auth import views as auth_views
@@ -9,6 +9,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
     path('about/', about, name='about'),
+    path('menu/', menu, name='menu'),
     path('bookings/', booking_list, name='booking_list'),
     path('bookings/create/', booking_create, name='booking_create'),
     path('register/', register, name='register'),
